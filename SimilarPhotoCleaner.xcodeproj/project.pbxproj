@@ -6,20 +6,43 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		5C0A1E000000000000000020 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5C0A1E000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C0A1E000000000000000010;
+			remoteInfo = SimilarPhotoCleaner;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		9FD5D2122EA9126100DD5349 /* AlbumCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlbumCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0A1E000000000000000011 /* SimilarPhotoCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimilarPhotoCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0A1E000000000000000031 /* SimilarPhotoCleanerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimilarPhotoCleanerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9FD5D2142EA9126100DD5349 /* AlbumCleaner */ = {
+		5C0A1E000000000000000012 /* SimilarPhotoCleaner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AlbumCleaner;
+			path = SimilarPhotoCleaner;
+			sourceTree = "<group>";
+		};
+		5C0A1E000000000000000032 /* SimilarPhotoCleanerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SimilarPhotoCleanerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		9FD5D20F2EA9126100DD5349 /* Frameworks */ = {
+		5C0A1E000000000000000014 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C0A1E000000000000000034 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -29,18 +52,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9FD5D2092EA9126100DD5349 = {
+		5C0A1E000000000000000002 = {
 			isa = PBXGroup;
 			children = (
-				9FD5D2142EA9126100DD5349 /* AlbumCleaner */,
-				9FD5D2132EA9126100DD5349 /* Products */,
+				5C0A1E000000000000000012 /* SimilarPhotoCleaner */,
+				5C0A1E000000000000000032 /* SimilarPhotoCleanerTests */,
+				5C0A1E000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		9FD5D2132EA9126100DD5349 /* Products */ = {
+		5C0A1E000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9FD5D2122EA9126100DD5349 /* AlbumCleaner.app */,
+				5C0A1E000000000000000011 /* SimilarPhotoCleaner.app */,
+				5C0A1E000000000000000031 /* SimilarPhotoCleanerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,64 +73,99 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9FD5D2112EA9126100DD5349 /* AlbumCleaner */ = {
+		5C0A1E000000000000000010 /* SimilarPhotoCleaner */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9FD5D21D2EA9126300DD5349 /* Build configuration list for PBXNativeTarget "AlbumCleaner" */;
+			buildConfigurationList = 5C0A1E000000000000000018 /* Build configuration list for PBXNativeTarget "SimilarPhotoCleaner" */;
 			buildPhases = (
-				9FD5D20E2EA9126100DD5349 /* Sources */,
-				9FD5D20F2EA9126100DD5349 /* Frameworks */,
-				9FD5D2102EA9126100DD5349 /* Resources */,
+				5C0A1E000000000000000013 /* Sources */,
+				5C0A1E000000000000000014 /* Frameworks */,
+				5C0A1E000000000000000015 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9FD5D2142EA9126100DD5349 /* AlbumCleaner */,
+				5C0A1E000000000000000012 /* SimilarPhotoCleaner */,
 			);
-			name = AlbumCleaner;
+			name = SimilarPhotoCleaner;
 			packageProductDependencies = (
 			);
-			productName = AlbumCleaner;
-			productReference = 9FD5D2122EA9126100DD5349 /* AlbumCleaner.app */;
+			productName = SimilarPhotoCleaner;
+			productReference = 5C0A1E000000000000000011 /* SimilarPhotoCleaner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		5C0A1E000000000000000030 /* SimilarPhotoCleanerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C0A1E000000000000000038 /* Build configuration list for PBXNativeTarget "SimilarPhotoCleanerTests" */;
+			buildPhases = (
+				5C0A1E000000000000000033 /* Sources */,
+				5C0A1E000000000000000034 /* Frameworks */,
+				5C0A1E000000000000000035 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C0A1E000000000000000021 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5C0A1E000000000000000032 /* SimilarPhotoCleanerTests */,
+			);
+			name = SimilarPhotoCleanerTests;
+			packageProductDependencies = (
+			);
+			productName = SimilarPhotoCleanerTests;
+			productReference = 5C0A1E000000000000000031 /* SimilarPhotoCleanerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		9FD5D20A2EA9126100DD5349 /* Project object */ = {
+		5C0A1E000000000000000001 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					9FD5D2112EA9126100DD5349 = {
+					5C0A1E000000000000000010 = {
 						CreatedOnToolsVersion = 26.0.1;
+					};
+					5C0A1E000000000000000030 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 5C0A1E000000000000000010;
 					};
 				};
 			};
-			buildConfigurationList = 9FD5D20D2EA9126100DD5349 /* Build configuration list for PBXProject "AlbumCleaner" */;
-			developmentRegion = en;
+			buildConfigurationList = 5C0A1E000000000000000004 /* Build configuration list for PBXProject "SimilarPhotoCleaner" */;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
+				ja,
 				Base,
 			);
-			mainGroup = 9FD5D2092EA9126100DD5349;
+			mainGroup = 5C0A1E000000000000000002;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 9FD5D2132EA9126100DD5349 /* Products */;
+			productRefGroup = 5C0A1E000000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9FD5D2112EA9126100DD5349 /* AlbumCleaner */,
+				5C0A1E000000000000000010 /* SimilarPhotoCleaner */,
+				5C0A1E000000000000000030 /* SimilarPhotoCleanerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9FD5D2102EA9126100DD5349 /* Resources */ = {
+		5C0A1E000000000000000015 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C0A1E000000000000000035 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -115,7 +175,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		9FD5D20E2EA9126100DD5349 /* Sources */ = {
+		5C0A1E000000000000000013 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C0A1E000000000000000033 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -124,8 +191,16 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5C0A1E000000000000000021 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C0A1E000000000000000010 /* SimilarPhotoCleaner */;
+			targetProxy = 5C0A1E000000000000000020 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
-		9FD5D21B2EA9126300DD5349 /* Debug */ = {
+		5C0A1E000000000000000005 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -188,7 +263,7 @@
 			};
 			name = Debug;
 		};
-		9FD5D21C2EA9126300DD5349 /* Release */ = {
+		5C0A1E000000000000000006 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -244,7 +319,7 @@
 			};
 			name = Release;
 		};
-		9FD5D21E2EA9126300DD5349 /* Debug */ = {
+		5C0A1E000000000000000016 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -253,17 +328,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SimilarPhotoCleaner";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "似た写真やスクリーンショットを見つけて整理するために、写真ライブラリにアクセスします。写真は端末の外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tomopu.AlbumCleaner;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tomopu.SimilarPhotoCleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -275,7 +352,7 @@
 			};
 			name = Debug;
 		};
-		9FD5D21F2EA9126300DD5349 /* Release */ = {
+		5C0A1E000000000000000017 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -284,17 +361,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SimilarPhotoCleaner";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "似た写真やスクリーンショットを見つけて整理するために、写真ライブラリにアクセスします。写真は端末の外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tomopu.AlbumCleaner;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tomopu.SimilarPhotoCleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -306,28 +385,79 @@
 			};
 			name = Release;
 		};
+		5C0A1E000000000000000036 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tomopu.SimilarPhotoCleanerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SimilarPhotoCleaner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SimilarPhotoCleaner";
+			};
+			name = Debug;
+		};
+		5C0A1E000000000000000037 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tomopu.SimilarPhotoCleanerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SimilarPhotoCleaner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SimilarPhotoCleaner";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9FD5D20D2EA9126100DD5349 /* Build configuration list for PBXProject "AlbumCleaner" */ = {
+		5C0A1E000000000000000004 /* Build configuration list for PBXProject "SimilarPhotoCleaner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9FD5D21B2EA9126300DD5349 /* Debug */,
-				9FD5D21C2EA9126300DD5349 /* Release */,
+				5C0A1E000000000000000005 /* Debug */,
+				5C0A1E000000000000000006 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9FD5D21D2EA9126300DD5349 /* Build configuration list for PBXNativeTarget "AlbumCleaner" */ = {
+		5C0A1E000000000000000018 /* Build configuration list for PBXNativeTarget "SimilarPhotoCleaner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9FD5D21E2EA9126300DD5349 /* Debug */,
-				9FD5D21F2EA9126300DD5349 /* Release */,
+				5C0A1E000000000000000016 /* Debug */,
+				5C0A1E000000000000000017 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C0A1E000000000000000038 /* Build configuration list for PBXNativeTarget "SimilarPhotoCleanerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C0A1E000000000000000036 /* Debug */,
+				5C0A1E000000000000000037 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 9FD5D20A2EA9126100DD5349 /* Project object */;
+	rootObject = 5C0A1E000000000000000001 /* Project object */;
 }

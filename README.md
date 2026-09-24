@@ -2,6 +2,15 @@
 
 iPhoneのカメラロールから似た写真やスクリーンショットを見つけ、残す1枚を提案して削除を手伝うiOSアプリ。解析はすべて端末内で行う。
 
+## 開発環境
+
+- Xcode 26 / iOS 26 以上
+- `SimilarPhotoCleaner.xcodeproj` を開き、スキーム `SimilarPhotoCleaner` で実行・テスト（Swift Testing）
+
+```bash
+xcodebuild test -project SimilarPhotoCleaner.xcodeproj -scheme SimilarPhotoCleaner -destination 'platform=iOS Simulator,name=iPhone 17'
+```
+
 ## ドキュメント
 
 - [PRD（プロダクト要求仕様）](docs/PRD.md)
