@@ -1,0 +1,13 @@
+sequenceDiagram
+  actor U as ユーザー
+  participant A as アプリ
+  participant P as PhotoKit
+  participant S as iOS
+  U->>A: 削除予定トレイで「削除」
+  A->>P: performChanges(deleteAssets)
+  P->>S: 確認ダイアログを要求
+  S->>U: 「48枚の写真を削除しますか？」
+  U->>S: 削除 / キャンセル
+  S-->>P: 結果
+  P-->>A: 成功 / キャンセル
+  A->>U: 削減容量と「最近削除した項目」の案内
