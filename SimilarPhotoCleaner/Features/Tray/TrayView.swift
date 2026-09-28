@@ -25,6 +25,7 @@ struct TrayView: View {
                     content
                 }
             }
+            .contentMargins(.top, Metrics.titleGap, for: .scrollContent)
             .background(Palette.background)
             .navigationTitle("削除予定")
             .sheet(item: $result) { result in

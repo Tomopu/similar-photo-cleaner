@@ -15,6 +15,7 @@ struct SimilarPhotoCleanerApp: App {
 
     init() {
         Self.removeLegacyStore()
+        NavigationBarStyle.apply()
         let cache: AnalysisCache
         let history: ModelContainer
         do {

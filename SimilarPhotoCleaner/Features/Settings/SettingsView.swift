@@ -92,6 +92,8 @@ struct SettingsView: View {
             }
             .tint(Palette.keep)
             .scrollContentBackground(.hidden)
+            .contentMargins(.top, Metrics.titleGap, for: .scrollContent)
+            .contentMargins(.horizontal, Metrics.screenMargin, for: .scrollContent)
             .background(Palette.background)
             .navigationTitle("設定")
             .task(id: scan.records.count) { cacheBytes = scan.cache.sizeInBytes }

@@ -10,9 +10,9 @@ struct OrganizeView: View {
             content
                 .navigationDestination(for: OrganizeRoute.self) { route in
                     switch route {
-                    case .similarGroups: SimilarGroupsView()
-                    case .swipe: SwipeMonthsView()
-                    case .screenshots: ScreenshotsView()
+                    case .similarGroups(let kind): SimilarGroupsView(kind: kind)
+                    case .swipe(let kind): SwipeMonthsView(kind: kind)
+                    case .screenshotsBulk: ScreenshotsView()
                     }
                 }
                 .navigationDestination(for: SimilarGroup.self) { group in

@@ -26,6 +26,7 @@ struct HistoryView: View {
                     content(summary)
                 }
             }
+            .contentMargins(.top, Metrics.titleGap, for: .scrollContent)
             .background(Palette.background)
             .navigationTitle("実績")
         }

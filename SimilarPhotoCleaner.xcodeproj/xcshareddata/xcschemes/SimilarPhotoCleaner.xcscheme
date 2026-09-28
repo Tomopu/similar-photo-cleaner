@@ -41,6 +41,17 @@
                ReferencedContainer = "container:SimilarPhotoCleaner.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5C0A1E000000000000000050"
+               BuildableName = "SimilarPhotoCleanerUITests.xctest"
+               BlueprintName = "SimilarPhotoCleanerUITests"
+               ReferencedContainer = "container:SimilarPhotoCleaner.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
