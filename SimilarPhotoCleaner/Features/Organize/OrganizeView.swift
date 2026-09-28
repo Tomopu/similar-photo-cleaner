@@ -45,30 +45,6 @@ struct OrganizeView: View {
             ScanProgressView()
         } else {
             HomeView()
-                .safeAreaInset(edge: .top) {
-                    if scan.phase == .scanning {
-                        ScanBanner()
-                    }
-                }
         }
-    }
-}
-
-/// 2回目以降のスキャン中にホームの上に出す細い進捗表示。
-private struct ScanBanner: View {
-    @Environment(ScanCoordinator.self) private var scan
-
-    var body: some View {
-        HStack(spacing: 10) {
-            ProgressView(value: scan.progress)
-                .tint(Palette.keep)
-            Text("\(scan.processed.formatted()) / \(scan.total.formatted())")
-                .font(.caption)
-                .monospacedDigit()
-                .foregroundStyle(Palette.text2)
-        }
-        .padding(.horizontal, Metrics.screenMargin)
-        .padding(.vertical, 8)
-        .background(Palette.background)
     }
 }

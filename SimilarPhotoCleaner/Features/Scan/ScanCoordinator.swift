@@ -41,6 +41,13 @@ final class ScanCoordinator {
     /// 解析済みの写真が1枚でもあるか。
     private(set) var hasAnalyzedPhotos = false
 
+    /// 解析が必要な枚数が決まったとき（バックグラウンド継続の判断に使う）。
+    var onScanPlanned: ((Int) -> Void)?
+    /// 進み具合（解析済み、全体）。
+    var onProgress: ((Int, Int) -> Void)?
+    /// スキャンが終わったとき。最後まで終わったら true、途中で止めたら false。
+    var onFinished: ((Bool) -> Void)?
+
     private var task: Task<Void, Never>?
     private let batchSize = 32
     private let maxConcurrentAnalyses = 4
@@ -101,6 +108,8 @@ final class ScanCoordinator {
         total = snapshots.count
         processed = total - pending.count
         screenshotCount = snapshots.filter(\.isScreenshot).count
+        onScanPlanned?(pending.count)
+        onProgress?(processed, total)
 
         for chunk in pending.chunked(into: batchSize) {
             if Task.isCancelled { break }
@@ -110,6 +119,7 @@ final class ScanCoordinator {
             }
             try? context.save()
             processed += chunk.count
+            onProgress?(processed, total)
         }
 
         await reloadIndex(context: context)
@@ -119,6 +129,7 @@ final class ScanCoordinator {
             phase = .finished
             lastScanDate = .now
         }
+        onFinished?(phase == .finished)
     }
 
     /// ライブラリから消えた写真の結果を消し、まだ解析していない写真を返す。
