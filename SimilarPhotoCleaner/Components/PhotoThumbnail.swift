@@ -5,6 +5,8 @@ import SwiftUI
 struct PhotoThumbnail: View {
     let id: String
     var maxPixel: CGFloat = 400
+    /// `.fit` にすると写真全体を表示する（余白は面の色）。
+    var contentMode: ContentMode = .fill
 
     @State private var image: UIImage?
 
@@ -15,7 +17,7 @@ struct PhotoThumbnail: View {
                 if let image {
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFill()
+                        .aspectRatio(contentMode: contentMode)
                 }
             }
             .clipped()

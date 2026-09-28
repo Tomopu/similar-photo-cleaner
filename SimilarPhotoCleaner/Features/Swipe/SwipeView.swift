@@ -2,6 +2,7 @@ import SwiftUI
 
 /// スワイプで仕分ける月。
 struct SwipeMonth: Hashable {
+    let kind: MediaKind
     let month: Date
     /// 撮影日時の順。
     let photoIDs: [String]
@@ -9,14 +10,16 @@ struct SwipeMonth: Hashable {
 
 /// スワイプする月を選ぶ。
 struct SwipeMonthsView: View {
+    let kind: MediaKind
+
     @Environment(ScanCoordinator.self) private var scan
 
     private var months: [SwipeMonth] {
         let calendar = Calendar.current
-        let photos = scan.records.values.filter { !$0.isScreenshot }
+        let photos = scan.records.values.filter { $0.isScreenshot == (kind == .screenshots) }
         let byMonth = Dictionary(grouping: photos) { calendar.dateInterval(of: .month, for: $0.creationDate)?.start ?? $0.creationDate }
         return byMonth
-            .map { SwipeMonth(month: $0.key, photoIDs: $0.value.sorted { $0.creationDate < $1.creationDate }.map(\.id)) }
+            .map { SwipeMonth(kind: kind, month: $0.key, photoIDs: $0.value.sorted { $0.creationDate < $1.creationDate }.map(\.id)) }
             .sorted { $0.month > $1.month }
     }
 
@@ -37,10 +40,10 @@ struct SwipeMonthsView: View {
         .background(Palette.background)
         .overlay {
             if months.isEmpty {
-                ContentUnavailableView("写真がありません", systemImage: "photo")
+                ContentUnavailableView(kind == .photos ? "写真がありません" : "スクリーンショットがありません", systemImage: "photo")
             }
         }
-        .navigationTitle("スワイプで仕分け")
+        .navigationTitle(kind == .photos ? "写真をスワイプで仕分け" : "スクショをスワイプで仕分け")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -73,6 +76,10 @@ struct SwipeDeckView: View {
 
     private let threshold: CGFloat = 110
 
+    private var traySource: DeletionSource {
+        month.kind == .screenshots ? .screenshot : .swipe
+    }
+
     private var currentID: String? {
         index < month.photoIDs.count ? month.photoIDs[index] : nil
     }
@@ -90,7 +97,7 @@ struct SwipeDeckView: View {
                     .padding(.top, 20)
                 controls
                     .padding(.top, 16)
-                Text("削除予定 \(tray.items(from: .swipe).count)枚 · \(tray.items(from: .swipe).reduce(0) { $0 + $1.bytes }.formattedBytes)")
+                Text("削除予定 \(tray.items(from: traySource).count)枚 · \(tray.items(from: traySource).reduce(0) { $0 + $1.bytes }.formattedBytes)")
                     .font(.footnote)
                     .foregroundStyle(Palette.text2)
                     .monospacedDigit()
@@ -208,7 +215,7 @@ struct SwipeDeckView: View {
         HStack(alignment: .bottom, spacing: 22) {
             controlButton("取り消し", systemImage: "arrow.uturn.backward", size: 48, fill: Palette.surface2, ink: Palette.text) { undo() }
                 .disabled(steps.isEmpty)
-            controlButton("削除", systemImage: "xmark", size: 68, fill: Palette.delete, ink: Palette.deleteInk) {
+            controlButton("削除", systemImage: "trash", size: 68, fill: Palette.delete, ink: Palette.deleteInk) {
                 if let id = currentID { decide(.delete, for: id) }
             }
             controlButton("保留", systemImage: "arrow.up", size: 52, fill: Palette.surface2, ink: Palette.text) {
@@ -298,7 +305,7 @@ struct SwipeDeckView: View {
         case .hold: CGSize(width: drag.width, height: -900)
         }
         if decision == .delete, let record = scan.records[id] {
-            tray.add([record], from: .swipe)
+            tray.add([record], from: month.kind == .screenshots ? .screenshot : .swipe)
         }
         steps.append(Step(id: id, decision: decision))
         withAnimation(.easeOut(duration: 0.2)) {
@@ -319,6 +326,6 @@ struct SwipeDeckView: View {
     }
 
     private func groupSize(of id: String) -> Int? {
-        scan.index.groups.first { $0.photoIDs.contains(id) }?.photoIDs.count
+        scan.index.groups(of: month.kind).first { $0.photoIDs.contains(id) }?.photoIDs.count
     }
 }

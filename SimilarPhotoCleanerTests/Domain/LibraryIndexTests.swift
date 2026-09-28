@@ -42,11 +42,29 @@ struct LibraryIndexTests {
     @Test func screenshotsAreListedSeparatelyNewestFirst() {
         let records = [
             record("s1", at: 0, vector: [1, 0], screenshot: true),
-            record("s2", at: 1, vector: [1, 0], screenshot: true),
+            record("s2", at: 1, vector: [0, 1], screenshot: true),
         ]
         let index = LibraryIndex.build(from: records, sensitivity: .standard)
         #expect(index.groups.isEmpty)
+        #expect(index.screenshotGroups.isEmpty)
         #expect(index.screenshots.map(\.id) == ["s2", "s1"])
+    }
+
+    @Test func similarScreenshotsAreGroupedSeparatelyFromPhotos() throws {
+        let records = [
+            record("photo1", at: 0, vector: [1, 0]),
+            record("photo2", at: 5, vector: [1, 0.01]),
+            // 5分おきのスクショも同じ場面として比べる
+            record("shot1", at: 0, vector: [0, 1], screenshot: true),
+            record("shot2", at: 300, vector: [0.01, 1], screenshot: true),
+        ]
+        let index = LibraryIndex.build(from: records, sensitivity: .standard)
+        #expect(index.groups.map(\.photoIDs) == [["photo1", "photo2"]])
+        #expect(index.groups.first?.kind == .photos)
+        let shots = try #require(index.screenshotGroups.first)
+        #expect(shots.photoIDs == ["shot1", "shot2"])
+        #expect(shots.kind == .screenshots)
+        #expect(index.groups(of: .screenshots) == index.screenshotGroups)
     }
 
     @Test func protectedPhotosAreKeptAndNeverCandidates() throws {

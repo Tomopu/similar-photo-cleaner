@@ -8,6 +8,8 @@ struct SimilarGroupsView: View {
         var id: Self { self }
     }
 
+    let kind: MediaKind
+
     @Environment(ScanCoordinator.self) private var scan
     @Environment(DeletionTray.self) private var tray
     @AppStorage(DismissedGroups.storageKey) private var dismissedGroupsData = Data()
@@ -18,7 +20,7 @@ struct SimilarGroupsView: View {
     }
 
     private var groups: [SimilarGroup] {
-        let visible = scan.index.groups.filter { !dismissedGroups.contains($0.id) }
+        let visible = scan.index.groups(of: kind).filter { !dismissedGroups.contains($0.id) }
         switch order {
         case .reclaimable: return visible
         case .newest: return visible.sorted { $0.date > $1.date }
@@ -54,11 +56,11 @@ struct SimilarGroupsView: View {
         }
         .overlay {
             if groups.isEmpty {
-                ContentUnavailableView("似た写真は見つかりませんでした", systemImage: "checkmark.circle", description: Text("新しく写真を撮ったら、ホームを下に引いてスキャンし直せます。"))
+                ContentUnavailableView(kind == .photos ? "似た写真は見つかりませんでした" : "似たスクリーンショットは見つかりませんでした", systemImage: "checkmark.circle", description: Text("新しく写真を撮ったら、ホームを下に引いてスキャンし直せます。"))
             }
         }
         .background(Palette.background)
-        .navigationTitle("似た写真")
+        .navigationTitle(kind == .photos ? "似た写真" : "似たスクリーンショット")
         .navigationBarTitleDisplayMode(.inline)
     }
 

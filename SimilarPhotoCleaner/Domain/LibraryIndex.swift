@@ -43,9 +43,16 @@ nonisolated enum FileSizeEstimator {
     }
 }
 
+/// 写真とスクリーンショットの区別（ホームの2つのカテゴリー）。
+nonisolated enum MediaKind: String, CaseIterable, Hashable, Sendable {
+    case photos
+    case screenshots
+}
+
 /// 似た写真のグループ（1グループ = 1カード）。
 nonisolated struct SimilarGroup: Sendable, Hashable, Identifiable {
     let id: String
+    let kind: MediaKind
     /// 撮影日時の順。
     let photoIDs: [String]
     let bestID: String
@@ -56,15 +63,21 @@ nonisolated struct SimilarGroup: Sendable, Hashable, Identifiable {
     let date: Date
 }
 
-/// 解析結果から、似た写真のグループとスクリーンショットの一覧を作る。
+/// 解析結果から、似た写真・似たスクリーンショットのグループと一覧を作る。
 nonisolated struct LibraryIndex: Sendable {
+    /// 似た写真のグループ（減らせる容量の多い順）。
     let groups: [SimilarGroup]
+    /// 似たスクリーンショットのグループ（減らせる容量の多い順）。
+    let screenshotGroups: [SimilarGroup]
     /// 撮影日時の新しい順。
     let screenshots: [PhotoRecord]
     /// 書類・レシートなど、思い出性の低い実用写真（スクリーンショットを除く）。新しい順。
     let utilityPhotos: [PhotoRecord]
 
-    static let empty = LibraryIndex(groups: [], screenshots: [], utilityPhotos: [])
+    static let empty = LibraryIndex(groups: [], screenshotGroups: [], screenshots: [], utilityPhotos: [])
+
+    /// スクリーンショットは同じアプリの画面を数分おきに撮ることが多いので、場面の区切りを長めにする。
+    static let screenshotSplitter = SceneSplitter(maxInterval: 600)
 
     static func build(
         from records: [PhotoRecord],
@@ -74,12 +87,42 @@ nonisolated struct LibraryIndex: Sendable {
         splitter: SceneSplitter = SceneSplitter(),
         scorer: BestShotScorer = BestShotScorer()
     ) -> LibraryIndex {
-        let byID = Dictionary(uniqueKeysWithValues: records.map { ($0.id, $0) })
-        let photos = records.filter { !$0.isScreenshot }.sorted { $0.creationDate < $1.creationDate }
-        let grouper = SimilarityGrouper(sensitivity: sensitivity)
+        let photos = records.filter { !$0.isScreenshot }
+        let screenshots = records.filter(\.isScreenshot)
+        let builder = GroupBuilder(
+            grouper: SimilarityGrouper(sensitivity: sensitivity),
+            scorer: scorer,
+            excludeFavorites: excludeFavorites,
+            excludeEdited: excludeEdited
+        )
+        return LibraryIndex(
+            groups: builder.groups(of: photos, kind: .photos, splitter: splitter),
+            screenshotGroups: builder.groups(of: screenshots, kind: .screenshots, splitter: screenshotSplitter),
+            screenshots: screenshots.sorted { $0.creationDate > $1.creationDate },
+            utilityPhotos: records.filter { $0.isUtility && !$0.isScreenshot }.sorted { $0.creationDate > $1.creationDate }
+        )
+    }
 
+    func groups(of kind: MediaKind) -> [SimilarGroup] {
+        kind == .photos ? groups : screenshotGroups
+    }
+
+    var reclaimableBytes: Int64 { groups.reduce(0) { $0 + $1.reclaimableBytes } }
+    var screenshotBytes: Int64 { screenshots.reduce(0) { $0 + $1.estimatedBytes } }
+}
+
+/// 場面ごとに似たものをまとめ、ベストを選んで削除候補を決める。
+private nonisolated struct GroupBuilder {
+    let grouper: SimilarityGrouper
+    let scorer: BestShotScorer
+    let excludeFavorites: Bool
+    let excludeEdited: Bool
+
+    func groups(of records: [PhotoRecord], kind: MediaKind, splitter: SceneSplitter) -> [SimilarGroup] {
+        let byID = Dictionary(uniqueKeysWithValues: records.map { ($0.id, $0) })
+        let sorted = records.sorted { $0.creationDate < $1.creationDate }
         var groups: [SimilarGroup] = []
-        for scene in splitter.split(photos.map(\.feature)) {
+        for scene in splitter.split(sorted.map(\.feature)) {
             for ids in grouper.groups(in: scene) {
                 let members = ids.compactMap { byID[$0] }
                 guard let best = scorer.pickBest(from: members.map(\.metrics)) else { continue }
@@ -91,6 +134,7 @@ nonisolated struct LibraryIndex: Sendable {
                 guard !candidates.isEmpty else { continue }
                 groups.append(SimilarGroup(
                     id: ids[0],
+                    kind: kind,
                     photoIDs: ids,
                     bestID: best.bestID,
                     reasons: best.reasons,
@@ -100,14 +144,6 @@ nonisolated struct LibraryIndex: Sendable {
                 ))
             }
         }
-
-        return LibraryIndex(
-            groups: groups.sorted { $0.reclaimableBytes > $1.reclaimableBytes },
-            screenshots: records.filter(\.isScreenshot).sorted { $0.creationDate > $1.creationDate },
-            utilityPhotos: records.filter { $0.isUtility && !$0.isScreenshot }.sorted { $0.creationDate > $1.creationDate }
-        )
+        return groups.sorted { $0.reclaimableBytes > $1.reclaimableBytes }
     }
-
-    var reclaimableBytes: Int64 { groups.reduce(0) { $0 + $1.reclaimableBytes } }
-    var screenshotBytes: Int64 { screenshots.reduce(0) { $0 + $1.estimatedBytes } }
 }

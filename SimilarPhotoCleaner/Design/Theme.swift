@@ -14,10 +14,10 @@ enum Palette {
     /// 背景の上の青い文字・アイコン
     static let keepText = Color(light: 0x1F5AD0, dark: 0x8DB3FF)
     /// 削除・削除予定の塗り（文字は deleteInk）
-    static let delete = Color(hex: 0xF28A3C)
-    static let deleteInk = Color(hex: 0x1B0F06)
-    /// 背景の上のオレンジの文字
-    static let deleteText = Color(light: 0xB4540D, dark: 0xF28A3C)
+    static let delete = Color(light: 0xD93636, dark: 0xE5484D)
+    static let deleteInk = Color.white
+    /// 背景の上の赤い文字
+    static let deleteText = Color(light: 0xC22B2B, dark: 0xFF7B7B)
     /// グラフの棒（ダークはカードの上で 3:1 を確保するため明るめ）
     static let chart = Color(light: 0x2463E0, dark: 0x4F8AF7)
     static let chart2 = Color(light: 0x9DBBF5, dark: 0x9DBBF5)
@@ -28,6 +28,8 @@ enum Metrics {
     static let cardRadius: CGFloat = 22
     static let cardPadding: CGFloat = 16
     static let buttonHeight: CGFloat = 52
+    /// 大きなタイトルと、その下の最初の要素との間隔。
+    static let titleGap: CGFloat = 16
     /// 入れ子の角丸は「外側の角丸 − 余白」で揃える。
     static func innerRadius(outer: CGFloat, inset: CGFloat) -> CGFloat {
         max(outer - inset, 0)
@@ -71,5 +73,15 @@ struct CardBackground: ViewModifier {
 extension View {
     func card(padding: CGFloat = Metrics.cardPadding) -> some View {
         modifier(CardBackground(padding: padding))
+    }
+}
+
+enum NavigationBarStyle {
+    /// 大きなタイトルの左端を、画面の余白（24pt）に揃える。
+    /// ナビゲーションバーの標準の余白は 16pt なので、その差だけ字下げする。
+    static func apply() {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.firstLineHeadIndent = Metrics.screenMargin - 16
+        UINavigationBar.appearance().largeTitleTextAttributes = [.paragraphStyle: paragraph]
     }
 }
