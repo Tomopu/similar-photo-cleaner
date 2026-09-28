@@ -1,5 +1,8 @@
-/* Darkroom: SimilarPhotoCleaner のモックアップ共通スタイル */
-:root {
+/* Darkroom: SimilarPhotoCleaner のモックアップ共通スタイル
+   テーマ: .screen がダーク（既定）、.screen.theme-light がライト
+   角丸: 入れ子の要素は「内側の角丸 = 外側の角丸 − 余白」で揃える */
+
+.screen {
   --bg: #0E0F11;
   --surface: #17191C;
   --surface-2: #202328;
@@ -7,9 +10,46 @@
   --text: #F3F3F0;
   --text-2: #A9ADB4;
   --keep: #2F6FEB;
+  --on-keep: #FFFFFF;
   --keep-text: #8DB3FF;
   --delete: #F28A3C;
   --delete-ink: #1B0F06;
+  --delete-text: #F28A3C;
+  --seg-on: #3A3E45;
+  --chip: rgba(255, 255, 255, 0.1);
+  --chart: #2F6FEB;
+  --chart-2: #8DB3FF;
+  --grid: rgba(255, 255, 255, 0.08);
+  --glass-fill: rgba(44, 47, 53, 0.5);
+  --glass-edge: rgba(255, 255, 255, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+  --glass-selected: rgba(255, 255, 255, 0.14);
+}
+
+.screen.theme-light {
+  --bg: #F4F4F1;
+  --surface: #FFFFFF;
+  --surface-2: #E8E8E4;
+  --line: #DEDED9;
+  --text: #131416;
+  --text-2: #5C616A;
+  --keep: #2463E0;
+  --on-keep: #FFFFFF;
+  --keep-text: #1F5AD0;
+  --delete: #F28A3C;
+  --delete-ink: #1B0F06;
+  --delete-text: #B4540D;
+  --seg-on: #FFFFFF;
+  --chip: rgba(0, 0, 0, 0.06);
+  --chart: #2463E0;
+  --chart-2: #9DBBF5;
+  --grid: rgba(0, 0, 0, 0.08);
+  --glass-fill: rgba(255, 255, 255, 0.52);
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --glass-highlight: rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 14px 34px rgba(20, 22, 26, 0.16);
+  --glass-selected: rgba(0, 0, 0, 0.07);
 }
 
 * { box-sizing: border-box; }
@@ -17,7 +57,6 @@
 body {
   margin: 0;
   background: #0E0F11;
-  color: #F3F3F0;
   font-family: -apple-system, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -28,6 +67,7 @@ body {
   position: relative;
   overflow: hidden;
   background: var(--bg);
+  color: var(--text);
   display: flex;
   flex-direction: column;
   padding: 62px 20px 0;
@@ -39,17 +79,31 @@ body {
 .headline { margin: 0; font-size: 17px; font-weight: 600; }
 .body { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text-2); }
 .caption { margin: 0; font-size: 13px; line-height: 1.45; color: var(--text-2); }
+.section-label { margin: 0 0 8px 16px; font-size: 13px; font-weight: 600; color: var(--text-2); }
 .num { font-variant-numeric: tabular-nums; }
 .keep-text { color: var(--keep-text); }
-.delete-text { color: var(--delete); }
+.delete-text { color: var(--delete-text); }
+
+/* ガラス（iOS 26 の Liquid Glass を想定した表現） */
+.glass {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 55%),
+    var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.06),
+    var(--glass-shadow);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+}
 
 /* ナビゲーション */
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
 .nav-title { font-size: 17px; font-weight: 600; }
 .icon-btn {
-  width: 44px; height: 44px; border-radius: 22px; border: 0; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(255, 255, 255, 0.08); color: var(--text);
+  width: 44px; height: 44px; border-radius: 22px; padding: 0;
+  display: flex; align-items: center; justify-content: center; color: var(--text);
 }
 .text-btn { border: 0; background: none; color: var(--keep-text); font: inherit; font-size: 17px; min-height: 44px; padding: 0 4px; }
 svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
@@ -60,27 +114,38 @@ svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-widt
   font: inherit; font-size: 17px; font-weight: 600;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-keep { background: var(--keep); color: #FFFFFF; }
+.btn-keep { background: var(--keep); color: var(--on-keep); }
 .btn-delete { background: var(--delete); color: var(--delete-ink); }
 .btn-ghost { background: var(--surface-2); color: var(--text); }
 
-/* カード・チップ */
+/* カード・チップ・セグメント */
 .card { background: var(--surface); border-radius: 22px; padding: 16px; }
 .chip {
   display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px;
-  border-radius: 13px; font-size: 12px; font-weight: 600; background: rgba(255, 255, 255, 0.1); color: var(--text);
+  border-radius: 13px; font-size: 12px; font-weight: 600; background: var(--chip); color: var(--text);
 }
-.chip-keep { background: var(--keep); color: #FFFFFF; }
-.chip-delete { background: var(--delete); color: var(--delete-ink); }
+.chip-keep { background: var(--keep); color: var(--on-keep); }
 .segmented { display: flex; gap: 4px; padding: 3px; border-radius: 12px; background: var(--surface-2); }
 .segmented button {
   flex: 1; height: 34px; border: 0; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 600;
   background: none; color: var(--text-2);
 }
-.segmented button[aria-pressed="true"] { background: #3A3E45; color: var(--text); }
+.segmented button[aria-pressed="true"] { background: var(--seg-on); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+
+/* 設定のリスト */
+.group { background: var(--surface); border-radius: 22px; padding: 0 16px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--line); font-size: 16px; }
+.row:last-child { border-bottom: 0; }
+.switch {
+  width: 51px; height: 31px; border-radius: 15.5px; border: 0; padding: 2px; flex-shrink: 0;
+  display: flex; justify-content: flex-start; background: var(--surface-2);
+}
+.switch[aria-checked="true"] { justify-content: flex-end; background: var(--keep); }
+.switch::after { content: ""; width: 27px; height: 27px; border-radius: 13.5px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); }
 
 /* 写真のプレースホルダー（実写真の代わりの色面） */
 .ph { border-radius: 12px; background-color: #3A3E45; }
+.ph.r8 { border-radius: 8px; }
 .p-sea { background: linear-gradient(180deg, #9FC3D9 0%, #C9DCE4 44%, #3E7C8F 45%, #1F4E5C 100%); }
 .p-sunset { background: linear-gradient(180deg, #F2B38A 0%, #D9798A 52%, #4A3348 53%, #2A1F2E 100%); }
 .p-forest { background: linear-gradient(180deg, #B9CFB0 0%, #6E9168 55%, #2F4A33 100%); }
@@ -115,6 +180,10 @@ svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-widt
     repeating-linear-gradient(180deg, transparent 0 16px, #333941 16px 24px),
     #1C2025;
 }
+.theme-light .shot { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08); }
+
+/* 写真の上に重ねる要素（テーマによらず暗い下地） */
+.on-photo { background: rgba(14, 15, 17, 0.62); color: #F3F3F0; }
 
 /* 選択マーク */
 .check {
@@ -125,21 +194,23 @@ svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-widt
 .check.on { background: var(--delete); border-color: var(--delete); color: var(--delete-ink); }
 .check svg.i { width: 14px; height: 14px; stroke-width: 3; }
 
-/* フローティングのタブバー（iOS 26 の Liquid Glass を想定） */
+/* フローティングのタブバー: 外側 64pt 高・角丸 32、余白 6 → 内側のタブは角丸 26 */
 .tabbar {
-  position: absolute; left: 24px; right: 24px; bottom: 26px; height: 64px; border-radius: 32px;
-  display: flex; align-items: center; justify-content: space-around; padding: 0 8px;
-  background: rgba(38, 41, 46, 0.78); border: 1px solid rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  position: absolute; left: 24px; right: 24px; bottom: 26px; height: 64px; padding: 6px; border-radius: 32px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
 }
 .tab {
-  position: relative; min-width: 84px; min-height: 52px; border: 0; border-radius: 26px; background: none;
+  position: relative; height: 52px; border: 0; border-radius: 26px; background: none;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   font: inherit; font-size: 10px; font-weight: 600; color: var(--text-2);
 }
-.tab[aria-current="page"] { color: var(--text); background: rgba(255, 255, 255, 0.1); }
+.tab[aria-current="page"] {
+  color: var(--keep-text);
+  background: var(--glass-selected);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
 .badge {
-  position: absolute; top: 4px; left: 50%; margin-left: 6px; min-width: 20px; height: 18px; padding: 0 5px;
+  position: absolute; top: 3px; left: 50%; margin-left: 5px; min-width: 20px; height: 18px; padding: 0 5px;
   border-radius: 9px; background: var(--delete); color: var(--delete-ink); font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }

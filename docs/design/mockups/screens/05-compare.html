@@ -8,18 +8,18 @@
 <body>
 <main class="screen" style="width: 390px; height: 844px; padding-bottom: 34px">
   <div class="nav">
-    <a href="04-similar-groups.html" class="icon-btn" aria-label="戻る"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <a href="04-similar-groups.html" class="icon-btn glass" aria-label="戻る"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
     <span class="nav-title num">8枚を比較 · 2 / 7</span>
     <button class="text-btn" type="button" style="font-size: 15px">似ていない</button>
   </div>
 
   <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
     <figure style="margin: 0; position: relative">
-      <div class="ph p-people" style="height: 218px; border-radius: 18px; outline: 3px solid #2F6FEB; outline-offset: -3px"></div>
-      <span class="chip chip-keep" style="position: absolute; left: 12px; top: 12px">ベスト</span>
-      <div class="segmented" style="position: absolute; right: 10px; top: 10px; width: 132px; background: rgba(14, 15, 17, 0.72)" role="group" aria-label="上の写真">
-        <button type="button" aria-pressed="true" style="background: #2F6FEB; color: #FFFFFF">残す</button>
-        <button type="button" aria-pressed="false">削除</button>
+      <div class="ph p-people" style="height: 218px; border-radius: 18px; outline: 3px solid var(--keep); outline-offset: -3px"></div>
+      <span class="chip chip-keep" style="position: absolute; left: 12px; top: 12px; border-radius: 6px">ベスト</span>
+      <div class="segmented" style="position: absolute; right: 10px; top: 10px; width: 132px; border-radius: 8px; background: rgba(14, 15, 17, 0.72)" role="group" aria-label="上の写真">
+        <button type="button" aria-pressed="true" style="border-radius: 5px; background: var(--keep); color: var(--on-keep)">残す</button>
+        <button type="button" aria-pressed="false" style="border-radius: 5px; color: #D5D8DD">削除</button>
       </div>
       <figcaption style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap">
         <span class="chip">シャープ 92</span>
@@ -30,9 +30,9 @@
 
     <figure style="margin: 0; position: relative">
       <div class="ph p-people-blur" style="height: 218px; border-radius: 18px"></div>
-      <div class="segmented" style="position: absolute; right: 10px; top: 10px; width: 132px; background: rgba(14, 15, 17, 0.72)" role="group" aria-label="下の写真">
-        <button type="button" aria-pressed="false">残す</button>
-        <button type="button" aria-pressed="true" style="background: #F28A3C; color: #1B0F06">削除</button>
+      <div class="segmented" style="position: absolute; right: 10px; top: 10px; width: 132px; border-radius: 8px; background: rgba(14, 15, 17, 0.72)" role="group" aria-label="下の写真">
+        <button type="button" aria-pressed="false" style="border-radius: 5px; color: #D5D8DD">残す</button>
+        <button type="button" aria-pressed="true" style="border-radius: 5px; background: var(--delete); color: var(--delete-ink)">削除</button>
       </div>
       <figcaption style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap">
         <span class="chip">シャープ 41</span>
@@ -45,8 +45,8 @@
   <p class="caption" style="text-align: center; margin-top: 12px">ピンチで2枚を同時に拡大できます</p>
 
   <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 5px; margin-top: 14px" aria-label="グループ内の写真">
-    <div class="ph p-people" style="height: 40px; border-radius: 7px; outline: 2px solid #2F6FEB"></div>
-    <div class="ph p-people-blur" style="height: 40px; border-radius: 7px; outline: 2px solid #F3F3F0"></div>
+    <div class="ph p-people" style="height: 40px; border-radius: 7px; outline: 2px solid var(--keep)"></div>
+    <div class="ph p-people-blur" style="height: 40px; border-radius: 7px; outline: 2px solid var(--text)"></div>
     <div class="ph p-people" style="height: 40px; border-radius: 7px; opacity: 0.5"></div>
     <div class="ph p-people-blur" style="height: 40px; border-radius: 7px; opacity: 0.5"></div>
     <div class="ph p-people" style="height: 40px; border-radius: 7px; opacity: 0.5"></div>
