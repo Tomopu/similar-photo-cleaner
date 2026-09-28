@@ -14,6 +14,7 @@ xcodebuild test -project SimilarPhotoCleaner.xcodeproj -scheme SimilarPhotoClean
 ## ドキュメント
 
 - [PRD（プロダクト要求仕様）](docs/PRD.md)
+- [UIデザイン](docs/UI_DESIGN.md)（画面モックアップのソースは `docs/design/mockups/`、PNG は `python3 scripts/build_mockups.py` で再生成）
 - 図: `docs/figure/*.png`（元になる mermaid ソースは `docs/figure/src/*.mmd`）
 - 旧 AlbumCleaner の要件メモ: `docs/archive/AlbumCleaner/`（参考用。現行の仕様は PRD）
 
