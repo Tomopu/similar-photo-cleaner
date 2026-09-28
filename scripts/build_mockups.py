@@ -100,34 +100,31 @@ def write_canvas(canvas_dir: Path) -> None:
     project.mkdir(parents=True, exist_ok=True)
     css = (MOCKUPS / "common.css").read_text(encoding="utf-8")
     boards, order, notes = {}, [], {}
-    for theme, theme_label in THEMES:
-        y = 0
-        for row_index, (row_title, stems) in enumerate(ROWS):
-            notes[f"{theme}-row{row_index + 1}"] = {
-                "x": 0,
-                "y": y - 300,
-                "text": f"{row_title}（{theme_label}）",
-                "kind": "title1",
-                "maxW": len(stems) * WIDTH + (len(stems) - 1) * 80,
-                "page": theme,
-            }
+    y = 0
+    for row_index, (row_title, stems) in enumerate(ROWS):
+        notes[f"row{row_index + 1}"] = {
+            "x": 0,
+            "y": y - 300,
+            "text": row_title,
+            "kind": "title1",
+            "maxW": len(stems) * WIDTH + (len(stems) - 1) * 80,
+        }
+        for theme, theme_label in THEMES:
             for col, stem in enumerate(stems):
                 src = SCREENS / f"{stem}.html"
                 name = canvas_name(stem, theme)
                 (project / name).write_text(to_dc_html(src, css, theme), encoding="utf-8")
                 title = re.search(r"<title>(.*?)</title>", src.read_text(encoding="utf-8")).group(1)
-                boards[name] = {
-                    "x": col * (WIDTH + 80), "y": y, "w": WIDTH, "h": HEIGHT,
-                    "title": f"{title}（{theme_label}）", "page": theme,
-                }
+                boards[name] = {"x": col * (WIDTH + 80), "y": y, "w": WIDTH, "h": HEIGHT, "title": f"{title}（{theme_label}）"}
                 order.append(name)
-            y += HEIGHT + 400
+            y += HEIGHT + 120
+        y += 280
     index = {
         "v": 3,
         "createdOnFiles": {"v": 1, "at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")},
         "title": "SimilarPhotoCleaner UIデザイン",
-        "launch": {"view": "canvas", "page": "dark"},
-        "pages": [{"id": theme, "name": label} for theme, label in THEMES],
+        "launch": {"view": "canvas"},
+        "pages": [],
         "boards": boards,
         "order": order,
         "notes": notes,

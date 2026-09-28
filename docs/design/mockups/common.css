@@ -3,27 +3,28 @@
    角丸: 入れ子の要素は「内側の角丸 = 外側の角丸 − 余白」で揃える */
 
 .screen {
-  --bg: #0E0F11;
-  --surface: #17191C;
-  --surface-2: #202328;
-  --line: #2B2F35;
-  --text: #F3F3F0;
-  --text-2: #A9ADB4;
+  /* ダーク: Atom One Dark 寄りの濃いグレー */
+  --bg: #282C34;
+  --surface: #30353F;
+  --surface-2: #3A404B;
+  --line: #3E4451;
+  --text: #ECEEF2;
+  --text-2: #A9B0BC;
   --keep: #2F6FEB;
   --on-keep: #FFFFFF;
   --keep-text: #8DB3FF;
   --delete: #F28A3C;
   --delete-ink: #1B0F06;
   --delete-text: #F28A3C;
-  --seg-on: #3A3E45;
+  --seg-on: #4A5160;
   --chip: rgba(255, 255, 255, 0.1);
-  --chart: #2F6FEB;
-  --chart-2: #8DB3FF;
+  --chart: #4F8AF7;
+  --chart-2: #9DBBF5;
   --grid: rgba(255, 255, 255, 0.08);
-  --glass-fill: rgba(44, 47, 53, 0.5);
+  --glass-fill: rgba(58, 63, 74, 0.55);
   --glass-edge: rgba(255, 255, 255, 0.16);
   --glass-highlight: rgba(255, 255, 255, 0.3);
-  --glass-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+  --glass-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
   --glass-selected: rgba(255, 255, 255, 0.14);
 }
 
@@ -56,7 +57,7 @@
 
 body {
   margin: 0;
-  background: #0E0F11;
+  background: #282C34;
   font-family: -apple-system, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -70,7 +71,7 @@ body {
   color: var(--text);
   display: flex;
   flex-direction: column;
-  padding: 62px 20px 0;
+  padding: 62px 24px 0;
 }
 
 /* テキスト */
