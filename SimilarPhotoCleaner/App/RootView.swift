@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// 4つのタブ。iOS 26 の TabView は Liquid Glass のタブバーで描画される。
@@ -14,7 +15,7 @@ struct RootView: View {
     var body: some View {
         TabView(selection: $selection) {
             Tab("整理", systemImage: "photo.stack", value: .organize) {
-                PlaceholderScreen(title: "整理")
+                OrganizeView()
             }
             Tab("削除予定", systemImage: "trash", value: .tray) {
                 PlaceholderScreen(title: "削除予定")
@@ -46,4 +47,6 @@ private struct PlaceholderScreen: View {
 
 #Preview {
     RootView()
+        .environment(ScanCoordinator())
+        .modelContainer(for: [AnalyzedPhoto.self], inMemory: true)
 }
