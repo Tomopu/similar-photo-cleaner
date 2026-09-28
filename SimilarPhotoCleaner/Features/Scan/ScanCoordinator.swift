@@ -35,6 +35,8 @@ final class ScanCoordinator {
     private(set) var total = 0
     private(set) var screenshotCount = 0
     private(set) var index = LibraryIndex.empty
+    /// 解析済みの写真（ID → 結果）。
+    private(set) var records: [String: PhotoRecord] = [:]
     private(set) var lastScanDate: Date?
     /// 解析済みの写真が1枚でもあるか。
     private(set) var hasAnalyzedPhotos = false
@@ -57,6 +59,7 @@ final class ScanCoordinator {
     /// 保存済みの解析結果からグループを作り直す（起動直後や設定変更時）。
     func reloadIndex(context: ModelContext) async {
         let records = ((try? context.fetch(FetchDescriptor<AnalyzedPhoto>())) ?? []).map(\.record)
+        self.records = Dictionary(records.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         hasAnalyzedPhotos = !records.isEmpty
         let settings = ScanSettings.current()
         index = await Task.detached(priority: .userInitiated) {
@@ -69,6 +72,16 @@ final class ScanCoordinator {
         }.value
         screenshotCount = index.screenshots.count
         logger.debug("解析済み \(records.count) 枚、グループ \(self.index.groups.map(\.photoIDs.count), privacy: .public)")
+    }
+
+    /// 削除した写真の解析結果を消して、グループを作り直す。
+    func removeDeleted(_ ids: Set<String>, context: ModelContext) async {
+        let stored = (try? context.fetch(FetchDescriptor<AnalyzedPhoto>())) ?? []
+        for photo in stored where ids.contains(photo.localIdentifier) {
+            context.delete(photo)
+        }
+        try? context.save()
+        await reloadIndex(context: context)
     }
 
     func startScan(context: ModelContext) {

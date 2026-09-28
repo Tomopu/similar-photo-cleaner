@@ -61,8 +61,10 @@ nonisolated struct LibraryIndex: Sendable {
     let groups: [SimilarGroup]
     /// 撮影日時の新しい順。
     let screenshots: [PhotoRecord]
+    /// 書類・レシートなど、思い出性の低い実用写真（スクリーンショットを除く）。新しい順。
+    let utilityPhotos: [PhotoRecord]
 
-    static let empty = LibraryIndex(groups: [], screenshots: [])
+    static let empty = LibraryIndex(groups: [], screenshots: [], utilityPhotos: [])
 
     static func build(
         from records: [PhotoRecord],
@@ -101,7 +103,8 @@ nonisolated struct LibraryIndex: Sendable {
 
         return LibraryIndex(
             groups: groups.sorted { $0.reclaimableBytes > $1.reclaimableBytes },
-            screenshots: records.filter(\.isScreenshot).sorted { $0.creationDate > $1.creationDate }
+            screenshots: records.filter(\.isScreenshot).sorted { $0.creationDate > $1.creationDate },
+            utilityPhotos: records.filter { $0.isUtility && !$0.isScreenshot }.sorted { $0.creationDate > $1.creationDate }
         )
     }
 

@@ -119,5 +119,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environment(ScanCoordinator())
-        .modelContainer(for: [AnalyzedPhoto.self], inMemory: true)
+        .modelContainer(for: [AnalyzedPhoto.self, DeletionRecord.self], inMemory: true)
 }

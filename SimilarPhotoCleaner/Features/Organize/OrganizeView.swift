@@ -11,13 +11,16 @@ struct OrganizeView: View {
             content
                 .navigationDestination(for: OrganizeRoute.self) { route in
                     switch route {
-                    case .similarGroups:
-                        ComingSoonView(title: "似た写真")
-                    case .swipe:
-                        ComingSoonView(title: "スワイプで仕分け")
-                    case .screenshots:
-                        ComingSoonView(title: "スクリーンショット")
+                    case .similarGroups: SimilarGroupsView()
+                    case .swipe: SwipeMonthsView()
+                    case .screenshots: ScreenshotsView()
                     }
+                }
+                .navigationDestination(for: SimilarGroup.self) { group in
+                    CompareView(group: group)
+                }
+                .navigationDestination(for: SwipeMonth.self) { month in
+                    SwipeDeckView(month: month)
                 }
         }
         .task {
@@ -67,17 +70,5 @@ private struct ScanBanner: View {
         .padding(.horizontal, Metrics.screenMargin)
         .padding(.vertical, 8)
         .background(Palette.background)
-    }
-}
-
-/// まだ実装していない画面。
-struct ComingSoonView: View {
-    let title: String
-
-    var body: some View {
-        ContentUnavailableView(title, systemImage: "hammer", description: Text("準備中です"))
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Palette.background)
-            .navigationTitle(title)
     }
 }
