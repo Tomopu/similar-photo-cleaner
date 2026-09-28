@@ -9,20 +9,28 @@ struct SimilarPhotoCleanerApp: App {
     @State private var tray = DeletionTray()
     @State private var navigation = AppNavigation()
 
-    private let container: ModelContainer
+    /// 削除の実績。解析キャッシュとは別に保存し、キャッシュを消しても残す。
+    private let history: ModelContainer
     private let background: BackgroundScan
 
     init() {
-        let container: ModelContainer
+        Self.removeLegacyStore()
+        let cache: AnalysisCache
+        let history: ModelContainer
         do {
-            container = try ModelContainer(for: AnalyzedPhoto.self, DeletionRecord.self)
+            cache = try AnalysisCache()
+            let url = URL.applicationSupportDirectory.appending(path: "history.store")
+            history = try ModelContainer(
+                for: DeletionRecord.self,
+                configurations: ModelConfiguration("History", schema: Schema([DeletionRecord.self]), url: url)
+            )
         } catch {
-            fatalError("解析データの保存先を用意できませんでした: \(error)")
+            fatalError("データの保存先を用意できませんでした: \(error)")
         }
-        let scan = ScanCoordinator()
-        let background = BackgroundScan(scan: scan, container: container)
+        let scan = ScanCoordinator(cache: cache)
+        let background = BackgroundScan(scan: scan)
         background.registerRefreshHandler()
-        self.container = container
+        self.history = history
         self.background = background
         _scan = State(initialValue: scan)
     }
@@ -35,11 +43,19 @@ struct SimilarPhotoCleanerApp: App {
                 .environment(navigation)
                 .preferredColorScheme(appearance.colorScheme)
         }
-        .modelContainer(container)
+        .modelContainer(history)
         .onChange(of: scenePhase) { _, phase in
             if phase == .background {
                 background.scheduleRefreshIfEnabled()
             }
+        }
+    }
+
+    /// 開発中の版で使っていた、解析結果と実績が同居した保存先を消す。
+    private static func removeLegacyStore() {
+        let base = URL.applicationSupportDirectory
+        for name in ["default.store", "default.store-shm", "default.store-wal"] {
+            try? FileManager.default.removeItem(at: base.appending(path: name))
         }
     }
 }

@@ -7,6 +7,10 @@
 		<string>com.tomopu.SimilarPhotoCleaner.scan.*</string>
 		<string>com.tomopu.SimilarPhotoCleaner.refresh</string>
 	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>

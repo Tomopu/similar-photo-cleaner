@@ -29,8 +29,8 @@ struct RootView: View {
 
 #Preview {
     RootView()
-        .environment(ScanCoordinator())
+        .environment(ScanCoordinator(cache: try! AnalysisCache(baseURL: .temporaryDirectory)))
         .environment(DeletionTray())
         .environment(AppNavigation())
-        .modelContainer(for: [AnalyzedPhoto.self, DeletionRecord.self], inMemory: true)
+        .modelContainer(for: [DeletionRecord.self], inMemory: true)
 }

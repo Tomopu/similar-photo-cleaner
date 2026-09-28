@@ -20,7 +20,10 @@ nonisolated struct ScanSettings: Sendable {
     }
 }
 
-/// 写真ライブラリのスキャン（差分解析 → 保存 → グループ作成）を進める。
+/// 写真ライブラリのスキャン（差分解析 → キャッシュへ保存 → グループ作成）を進める。
+///
+/// 解析結果はメモリ上の `records` とキャッシュ（`AnalysisCache`）の両方に持つ。
+/// グループの作り直し（設定変更・削除後）はメモリ上の結果だけで行い、キャッシュを読み直さない。
 @Observable
 final class ScanCoordinator {
     enum Phase: Equatable {
@@ -29,17 +32,17 @@ final class ScanCoordinator {
         case finished
     }
 
+    let cache: AnalysisCache
+
     private(set) var authorization = PhotoLibrary.authorizationStatus
     private(set) var phase: Phase = .idle
     private(set) var processed = 0
     private(set) var total = 0
     private(set) var screenshotCount = 0
     private(set) var index = LibraryIndex.empty
-    /// 解析済みの写真（ID → 結果）。
+    /// 解析済みの写真（ID → 結果）。キャッシュの中身をメモリに持ったもの。
     private(set) var records: [String: PhotoRecord] = [:]
     private(set) var lastScanDate: Date?
-    /// 解析済みの写真が1枚でもあるか。
-    private(set) var hasAnalyzedPhotos = false
 
     /// 解析が必要な枚数が決まったとき（バックグラウンド継続の判断に使う）。
     var onScanPlanned: ((Int) -> Void)?
@@ -49,11 +52,18 @@ final class ScanCoordinator {
     var onFinished: ((Bool) -> Void)?
 
     private var task: Task<Void, Never>?
+    private var hasLoadedCache = false
     private let batchSize = 32
     private let maxConcurrentAnalyses = 4
 
+    init(cache: AnalysisCache) {
+        self.cache = cache
+    }
+
     var isAuthorized: Bool { authorization == .authorized || authorization == .limited }
     var progress: Double { total == 0 ? 0 : Double(processed) / Double(total) }
+    /// 解析済みの写真が1枚でもあるか。
+    var hasAnalyzedPhotos: Bool { !records.isEmpty }
 
     func refreshAuthorization() {
         authorization = PhotoLibrary.authorizationStatus
@@ -63,66 +73,91 @@ final class ScanCoordinator {
         authorization = await PhotoLibrary.requestAuthorization()
     }
 
-    /// 保存済みの解析結果からグループを作り直す（起動直後や設定変更時）。
-    func reloadIndex(context: ModelContext) async {
-        let records = ((try? context.fetch(FetchDescriptor<AnalyzedPhoto>())) ?? []).map(\.record)
-        self.records = Dictionary(records.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        hasAnalyzedPhotos = !records.isEmpty
+    /// 起動後に一度だけ、キャッシュをメモリに読み込んでグループを作る。
+    func loadFromCache() async {
+        guard !hasLoadedCache else { return }
+        hasLoadedCache = true
+        reopenCacheIfRemoved()
+        records = Dictionary(cache.fetchRecords().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        await rebuildIndex()
+    }
+
+    /// メモリ上の解析結果からグループを作り直す（設定変更・削除のあと）。キャッシュは読み直さない。
+    func rebuildIndex() async {
+        let snapshot = Array(records.values)
         let settings = ScanSettings.current()
         index = await Task.detached(priority: .userInitiated) {
             LibraryIndex.build(
-                from: records,
+                from: snapshot,
                 sensitivity: settings.sensitivity,
                 excludeFavorites: settings.excludeFavorites,
                 excludeEdited: settings.excludeEdited
             )
         }.value
         screenshotCount = index.screenshots.count
-        logger.debug("解析済み \(records.count) 枚、グループ \(self.index.groups.map(\.photoIDs.count), privacy: .public)")
+        logger.debug("解析済み \(snapshot.count) 枚、グループ \(self.index.groups.map(\.photoIDs.count), privacy: .public)")
     }
 
-    /// 削除した写真の解析結果を消して、グループを作り直す。
-    func removeDeleted(_ ids: Set<String>, context: ModelContext) async {
-        let stored = (try? context.fetch(FetchDescriptor<AnalyzedPhoto>())) ?? []
-        for photo in stored where ids.contains(photo.localIdentifier) {
-            context.delete(photo)
-        }
-        try? context.save()
-        await reloadIndex(context: context)
-    }
-
-    func startScan(context: ModelContext) {
+    func startScan() {
         guard isAuthorized, phase != .scanning else { return }
-        task = Task { await run(context: context) }
+        task = Task { await run() }
     }
 
     func pause() {
         task?.cancel()
     }
 
-    private func run(context: ModelContext) async {
+    /// 削除した写真の解析結果を消して、グループを作り直す。
+    func removeDeleted(_ ids: Set<String>) async {
+        for photo in cache.fetch(ids: ids) {
+            cache.context.delete(photo)
+        }
+        try? cache.context.save()
+        for id in ids { records[id] = nil }
+        await rebuildIndex()
+    }
+
+    /// 解析キャッシュを消す。写真は消えない。次のスキャンで全部を解析し直す。
+    func clearCache() async throws {
+        task?.cancel()
+        await task?.value
+        try cache.clear()
+        records = [:]
+        index = .empty
+        screenshotCount = 0
+        processed = 0
+        total = 0
+        lastScanDate = nil
+        phase = .idle
+    }
+
+    private func run() async {
         phase = .scanning
+        reopenCacheIfRemoved()
         let snapshots = await Task.detached(priority: .userInitiated) { PhotoLibrary.fetchImageSnapshots() }.value
-        let pending = applyLibraryChanges(snapshots, context: context)
+        let diff = LibraryDiff.compute(snapshots: snapshots, cached: records)
+        apply(diff)
 
         total = snapshots.count
-        processed = total - pending.count
+        processed = total - diff.toAnalyze.count
         screenshotCount = snapshots.filter(\.isScreenshot).count
-        onScanPlanned?(pending.count)
+        onScanPlanned?(diff.toAnalyze.count)
         onProgress?(processed, total)
 
-        for chunk in pending.chunked(into: batchSize) {
+        for chunk in diff.toAnalyze.chunked(into: batchSize) {
             if Task.isCancelled { break }
             let results = await Self.analyze(Array(chunk), maxConcurrent: maxConcurrentAnalyses)
             for (snapshot, analysis) in results {
-                context.insert(AnalyzedPhoto(snapshot: snapshot, analysis: analysis))
+                let photo = AnalyzedPhoto(snapshot: snapshot, analysis: analysis)
+                cache.context.insert(photo)
+                records[snapshot.id] = photo.record
             }
-            try? context.save()
+            try? cache.context.save()
             processed += chunk.count
             onProgress?(processed, total)
         }
 
-        await reloadIndex(context: context)
+        await rebuildIndex()
         if Task.isCancelled {
             phase = .idle
         } else {
@@ -132,33 +167,35 @@ final class ScanCoordinator {
         onFinished?(phase == .finished)
     }
 
-    /// ライブラリから消えた写真の結果を消し、まだ解析していない写真を返す。
-    private func applyLibraryChanges(_ snapshots: [AssetSnapshot], context: ModelContext) -> [AssetSnapshot] {
-        let stored = (try? context.fetch(FetchDescriptor<AnalyzedPhoto>())) ?? []
-        let storedByID = Dictionary(stored.map { ($0.localIdentifier, $0) }, uniquingKeysWith: { first, _ in first })
-        let currentIDs = Set(snapshots.map(\.id))
-        for photo in stored where !currentIDs.contains(photo.localIdentifier) {
-            context.delete(photo)
+    /// 消えた写真・解析し直す写真の古い結果を消し、お気に入りなどの変化を反映する。
+    private func apply(_ diff: LibraryDiff) {
+        if !diff.toRemove.isEmpty {
+            for photo in cache.fetch(ids: diff.toRemove) {
+                cache.context.delete(photo)
+            }
+            for id in diff.toRemove { records[id] = nil }
         }
+        if !diff.toUpdate.isEmpty {
+            let snapshots = Dictionary(diff.toUpdate.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+            for photo in cache.fetch(ids: snapshots.keys) {
+                guard let snapshot = snapshots[photo.localIdentifier] else { continue }
+                photo.updateMetadata(from: snapshot)
+                records[photo.localIdentifier] = photo.record
+            }
+        }
+        try? cache.context.save()
+    }
 
-        var pending: [AssetSnapshot] = []
-        for snapshot in snapshots {
-            guard let existing = storedByID[snapshot.id] else {
-                pending.append(snapshot)
-                continue
+    /// ファイルアプリなどでキャッシュのフォルダが消されていたら、作り直して全部を解析し直す。
+    private func reopenCacheIfRemoved() {
+        do {
+            if try cache.reopenIfRemoved() {
+                logger.info("解析キャッシュが見つからないため作り直した")
+                records = [:]
             }
-            // 編集で見た目が変わった写真だけ解析し直す。お気に入りなどはメタデータの更新で済ませる。
-            if existing.hasAdjustments != snapshot.hasAdjustments
-                || existing.pixelWidth != snapshot.pixelWidth
-                || existing.pixelHeight != snapshot.pixelHeight {
-                context.delete(existing)
-                pending.append(snapshot)
-            } else {
-                existing.updateMetadata(from: snapshot)
-            }
+        } catch {
+            logger.error("解析キャッシュを開けない: \(error.localizedDescription, privacy: .public)")
         }
-        try? context.save()
-        return pending
     }
 
     /// サムネイルを読み込んで解析する。同時に `maxConcurrent` 枚まで。端末にない写真は飛ばす。

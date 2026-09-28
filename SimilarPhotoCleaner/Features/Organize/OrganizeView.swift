@@ -3,7 +3,6 @@ import SwiftUI
 /// 整理タブのルート。許可 → スキャン → ホームの順に切り替える。
 struct OrganizeView: View {
     @Environment(ScanCoordinator.self) private var scan
-    @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -26,14 +25,19 @@ struct OrganizeView: View {
         .task {
             scan.refreshAuthorization()
             guard scan.isAuthorized else { return }
-            await scan.reloadIndex(context: context)
-            scan.startScan(context: context)
+            await scan.loadFromCache()
+            scan.startScan()
         }
         .onChange(of: scenePhase) { _, phase in
             // 設定アプリで許可して戻ってきたときにスキャンを始める
             guard phase == .active, !scan.isAuthorized else { return }
             scan.refreshAuthorization()
-            if scan.isAuthorized { scan.startScan(context: context) }
+            if scan.isAuthorized {
+                Task {
+                    await scan.loadFromCache()
+                    scan.startScan()
+                }
+            }
         }
     }
 
