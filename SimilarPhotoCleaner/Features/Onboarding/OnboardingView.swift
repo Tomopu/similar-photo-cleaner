@@ -4,7 +4,6 @@ import SwiftUI
 /// 写真へのアクセスを許可してもらう画面。
 struct OnboardingView: View {
     @Environment(ScanCoordinator.self) private var scan
-    @Environment(\.modelContext) private var context
     @Environment(\.openURL) private var openURL
 
     private var isDenied: Bool {
@@ -44,7 +43,8 @@ struct OnboardingView: View {
                     } else {
                         Task {
                             await scan.requestAccess()
-                            scan.startScan(context: context)
+                            await scan.loadFromCache()
+                            scan.startScan()
                         }
                     }
                 } label: {

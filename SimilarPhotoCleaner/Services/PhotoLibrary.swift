@@ -14,6 +14,23 @@ nonisolated struct AssetSnapshot: Sendable, Hashable {
     let isFavorite: Bool
     let hasAdjustments: Bool
 
+    init(
+        id: String, creationDate: Date, modificationDate: Date? = nil, location: Coordinate? = nil,
+        burstIdentifier: String? = nil, pixelWidth: Int, pixelHeight: Int,
+        isScreenshot: Bool = false, isFavorite: Bool = false, hasAdjustments: Bool = false
+    ) {
+        self.id = id
+        self.creationDate = creationDate
+        self.modificationDate = modificationDate
+        self.location = location
+        self.burstIdentifier = burstIdentifier
+        self.pixelWidth = pixelWidth
+        self.pixelHeight = pixelHeight
+        self.isScreenshot = isScreenshot
+        self.isFavorite = isFavorite
+        self.hasAdjustments = hasAdjustments
+    }
+
     init(_ asset: PHAsset) {
         id = asset.localIdentifier
         creationDate = asset.creationDate ?? .distantPast

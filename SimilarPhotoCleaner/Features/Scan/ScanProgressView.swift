@@ -3,7 +3,6 @@ import SwiftUI
 /// 解析の進み具合。
 struct ScanProgressView: View {
     @Environment(ScanCoordinator.self) private var scan
-    @Environment(\.modelContext) private var context
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -36,7 +35,7 @@ struct ScanProgressView: View {
                 if scan.phase == .scanning {
                     scan.pause()
                 } else {
-                    scan.startScan(context: context)
+                    scan.startScan()
                 }
             } label: {
                 Label(scan.phase == .scanning ? "一時停止" : "再開", systemImage: scan.phase == .scanning ? "pause" : "play")

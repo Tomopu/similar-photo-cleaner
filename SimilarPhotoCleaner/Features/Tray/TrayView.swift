@@ -116,7 +116,7 @@ struct TrayView: View {
                 context.insert(DeletionRecord(count: items.count, bytesBySource: bytesBySource))
                 try? context.save()
                 tray.clear()
-                await scan.removeDeleted(Set(ids), context: context)
+                await scan.removeDeleted(Set(ids))
                 result = DeletionResult(count: items.count, bytes: bytesBySource.values.reduce(0, +))
             case .cancelled:
                 break

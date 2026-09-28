@@ -1,6 +1,5 @@
 import BackgroundTasks
 import OSLog
-import SwiftData
 import UserNotifications
 
 /// バックグラウンドでの解析。
@@ -13,12 +12,10 @@ final class BackgroundScan {
     static let continuedThreshold = 200
 
     private let scan: ScanCoordinator
-    private let container: ModelContainer
     private let logger = Logger(subsystem: "com.tomopu.SimilarPhotoCleaner", category: "background")
 
-    init(scan: ScanCoordinator, container: ModelContainer) {
+    init(scan: ScanCoordinator) {
         self.scan = scan
-        self.container = container
         scan.onScanPlanned = { [weak self] pending in
             guard let self, pending >= Self.continuedThreshold else { return }
             self.beginContinuedScan(total: pending)
@@ -109,7 +106,10 @@ final class BackgroundScan {
             task.setTaskCompleted(success: completed)
             self.scan.onFinished = nil
         }
-        scan.startScan(context: container.mainContext)
+        Task {
+            await scan.loadFromCache()
+            scan.startScan()
+        }
     }
 
     // MARK: - 通知

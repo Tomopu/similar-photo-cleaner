@@ -10,7 +10,6 @@ enum OrganizeRoute: Hashable {
 /// ホーム: 削減できる容量と、3つの整理モードへの入口。
 struct HomeView: View {
     @Environment(ScanCoordinator.self) private var scan
-    @Environment(\.modelContext) private var context
 
     var body: some View {
         ScrollView {
@@ -49,7 +48,7 @@ struct HomeView: View {
         .background(Palette.background)
         .navigationTitle("整理")
         .refreshable {
-            scan.startScan(context: context)
+            scan.startScan()
         }
     }
 

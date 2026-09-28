@@ -1,11 +1,11 @@
-import SwiftData
 import SwiftUI
 
 struct SettingsView: View {
     @Environment(ScanCoordinator.self) private var scan
-    @Environment(\.modelContext) private var context
-    @State private var analyzedCount = 0
+    @State private var cacheBytes: Int64 = 0
+    @State private var isConfirmingClear = false
     @State private var isConfirmingRescan = false
+    @State private var errorMessage: String?
 
     @AppStorage(SettingsKey.appearance) private var appearance: Appearance = .system
     @AppStorage(SettingsKey.sensitivity) private var sensitivity: Sensitivity = .standard
@@ -67,18 +67,26 @@ struct SettingsView: View {
                 .listRowBackground(Palette.surface)
 
                 Section {
-                    LabeledContent("解析済みの写真", value: analyzedCount == 0 ? "まだありません" : "\(analyzedCount.formatted())枚")
+                    LabeledContent("解析キャッシュ", value: scan.records.isEmpty ? "まだありません" : "\(scan.records.count.formatted())枚 · \(cacheBytes.formattedBytes)")
+                        .monospacedDigit()
+                    Button("キャッシュを削除", role: .destructive) { isConfirmingClear = true }
+                        .disabled(scan.records.isEmpty)
+                        .confirmationDialog("解析キャッシュを削除しますか？", isPresented: $isConfirmingClear, titleVisibility: .visible) {
+                            Button("キャッシュを削除", role: .destructive) { clearCache(rescan: false) }
+                        } message: {
+                            Text("写真は削除されません。次のスキャンで解析し直します。")
+                        }
                     Button("最初からスキャンし直す") { isConfirmingRescan = true }
-                        .disabled(scan.phase == .scanning || !scan.isAuthorized)
-                        .confirmationDialog("解析データを消して、最初からスキャンし直しますか？", isPresented: $isConfirmingRescan, titleVisibility: .visible) {
-                            Button("スキャンし直す", role: .destructive) { rescan() }
+                        .disabled(!scan.isAuthorized)
+                        .confirmationDialog("キャッシュを消して、最初からスキャンし直しますか？", isPresented: $isConfirmingRescan, titleVisibility: .visible) {
+                            Button("スキャンし直す", role: .destructive) { clearCache(rescan: true) }
                         } message: {
                             Text("写真は削除されません。")
                         }
                 } header: {
                     Text("データ")
                 } footer: {
-                    Text("写真と解析データはこのiPhoneの外に送信されません。バージョン \(Self.version)")
+                    Text("解析キャッシュは、ファイルアプリの「このiPhone内 › SimilarPhotoCleaner › \(AnalysisCache.folderName)」にあり、そこから削除することもできます。写真と解析データはこのiPhoneの外に送信されません。バージョン \(Self.version)")
                 }
                 .listRowBackground(Palette.surface)
             }
@@ -86,7 +94,12 @@ struct SettingsView: View {
             .scrollContentBackground(.hidden)
             .background(Palette.background)
             .navigationTitle("設定")
-            .task(id: scan.phase) { refreshCount() }
+            .task(id: scan.records.count) { cacheBytes = scan.cache.sizeInBytes }
+            .alert("キャッシュを削除できませんでした", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage ?? "")
+            }
             .onChange(of: sensitivity) { reloadGroups() }
             .onChange(of: excludeFavorites) { reloadGroups() }
             .onChange(of: excludeEdited) { reloadGroups() }
@@ -100,20 +113,21 @@ struct SettingsView: View {
         }
     }
 
-    private func refreshCount() {
-        analyzedCount = (try? context.fetchCount(FetchDescriptor<AnalyzedPhoto>())) ?? 0
-    }
-
-    /// 判定の設定が変わったら、保存済みの解析結果からグループを作り直す（再解析はしない）。
+    /// 判定の設定が変わったら、メモリ上の解析結果からグループを作り直す（再解析もキャッシュの読み直しもしない）。
     private func reloadGroups() {
-        Task { await scan.reloadIndex(context: context) }
+        Task { await scan.rebuildIndex() }
     }
 
-    private func rescan() {
-        try? context.delete(model: AnalyzedPhoto.self)
-        try? context.save()
-        refreshCount()
-        scan.startScan(context: context)
+    private func clearCache(rescan: Bool) {
+        Task {
+            do {
+                try await scan.clearCache()
+                cacheBytes = scan.cache.sizeInBytes
+                if rescan { scan.startScan() }
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
     }
 
     private var sensitivityValue: Binding<Double> {
@@ -130,6 +144,5 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
-        .environment(ScanCoordinator())
-        .modelContainer(for: [AnalyzedPhoto.self, DeletionRecord.self], inMemory: true)
+        .environment(ScanCoordinator(cache: try! AnalysisCache(baseURL: .temporaryDirectory)))
 }
