@@ -31,7 +31,6 @@ enum SettingsKey {
     static let sensitivity = "sensitivity"
     static let excludeFavorites = "excludeFavorites"
     static let excludeEdited = "excludeEdited"
-    static let excludeShared = "excludeShared"
     static let autoScanWhileCharging = "autoScanWhileCharging"
     static let notifyNewCandidates = "notifyNewCandidates"
 }

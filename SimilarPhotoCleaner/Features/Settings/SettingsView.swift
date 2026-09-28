@@ -1,11 +1,16 @@
+import SwiftData
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(ScanCoordinator.self) private var scan
+    @Environment(\.modelContext) private var context
+    @State private var analyzedCount = 0
+    @State private var isConfirmingRescan = false
+
     @AppStorage(SettingsKey.appearance) private var appearance: Appearance = .system
     @AppStorage(SettingsKey.sensitivity) private var sensitivity: Sensitivity = .standard
     @AppStorage(SettingsKey.excludeFavorites) private var excludeFavorites = true
     @AppStorage(SettingsKey.excludeEdited) private var excludeEdited = true
-    @AppStorage(SettingsKey.excludeShared) private var excludeShared = true
     @AppStorage(SettingsKey.autoScanWhileCharging) private var autoScanWhileCharging = true
     @AppStorage(SettingsKey.notifyNewCandidates) private var notifyNewCandidates = false
 
@@ -40,10 +45,13 @@ struct SettingsView: View {
                     .listRowBackground(Palette.surface)
                 }
 
-                Section("削除候補にしない写真") {
+                Section {
                     Toggle("お気に入り", isOn: $excludeFavorites)
                     Toggle("編集した写真", isOn: $excludeEdited)
-                    Toggle("共有アルバムの写真", isOn: $excludeShared)
+                } header: {
+                    Text("削除候補にしない写真")
+                } footer: {
+                    Text("共有アルバムの写真は、はじめから整理の対象になりません。")
                 }
                 .listRowBackground(Palette.surface)
 
@@ -54,9 +62,14 @@ struct SettingsView: View {
                 .listRowBackground(Palette.surface)
 
                 Section {
-                    LabeledContent("解析データ", value: "まだありません")
-                    Button("最初からスキャンし直す") {}
-                        .disabled(true)
+                    LabeledContent("解析済みの写真", value: analyzedCount == 0 ? "まだありません" : "\(analyzedCount.formatted())枚")
+                    Button("最初からスキャンし直す") { isConfirmingRescan = true }
+                        .disabled(scan.phase == .scanning || !scan.isAuthorized)
+                        .confirmationDialog("解析データを消して、最初からスキャンし直しますか？", isPresented: $isConfirmingRescan, titleVisibility: .visible) {
+                            Button("スキャンし直す", role: .destructive) { rescan() }
+                        } message: {
+                            Text("写真は削除されません。")
+                        }
                 } header: {
                     Text("データ")
                 } footer: {
@@ -68,7 +81,27 @@ struct SettingsView: View {
             .scrollContentBackground(.hidden)
             .background(Palette.background)
             .navigationTitle("設定")
+            .task(id: scan.phase) { refreshCount() }
+            .onChange(of: sensitivity) { reloadGroups() }
+            .onChange(of: excludeFavorites) { reloadGroups() }
+            .onChange(of: excludeEdited) { reloadGroups() }
         }
+    }
+
+    private func refreshCount() {
+        analyzedCount = (try? context.fetchCount(FetchDescriptor<AnalyzedPhoto>())) ?? 0
+    }
+
+    /// 判定の設定が変わったら、保存済みの解析結果からグループを作り直す（再解析はしない）。
+    private func reloadGroups() {
+        Task { await scan.reloadIndex(context: context) }
+    }
+
+    private func rescan() {
+        try? context.delete(model: AnalyzedPhoto.self)
+        try? context.save()
+        refreshCount()
+        scan.startScan(context: context)
     }
 
     private var sensitivityValue: Binding<Double> {
@@ -85,4 +118,6 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
+        .environment(ScanCoordinator())
+        .modelContainer(for: [AnalyzedPhoto.self], inMemory: true)
 }
