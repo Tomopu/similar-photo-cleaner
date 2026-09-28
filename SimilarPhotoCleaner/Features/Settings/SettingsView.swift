@@ -55,9 +55,14 @@ struct SettingsView: View {
                 }
                 .listRowBackground(Palette.surface)
 
-                Section("スキャン") {
+                Section {
                     Toggle("充電中に自動でスキャン", isOn: $autoScanWhileCharging)
                     Toggle("新しい候補を通知", isOn: $notifyNewCandidates)
+                        .disabled(!autoScanWhileCharging)
+                } header: {
+                    Text("スキャン")
+                } footer: {
+                    Text("充電中でしばらく使っていないときに、新しい写真を解析します。")
                 }
                 .listRowBackground(Palette.surface)
 
@@ -85,6 +90,13 @@ struct SettingsView: View {
             .onChange(of: sensitivity) { reloadGroups() }
             .onChange(of: excludeFavorites) { reloadGroups() }
             .onChange(of: excludeEdited) { reloadGroups() }
+            .onChange(of: notifyNewCandidates) { _, isOn in
+                guard isOn else { return }
+                Task {
+                    // 通知が許可されなかったらスイッチを戻す
+                    if await !BackgroundScan.requestNotificationPermission() { notifyNewCandidates = false }
+                }
+            }
         }
     }
 

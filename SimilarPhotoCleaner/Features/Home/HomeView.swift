@@ -15,6 +15,10 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                if scan.phase == .scanning {
+                    scanStatus
+                        .padding(.bottom, 12)
+                }
                 summaryCard
 
                 Text("整理のしかた")
@@ -47,6 +51,19 @@ struct HomeView: View {
         .refreshable {
             scan.startScan(context: context)
         }
+    }
+
+    /// 2回目以降のスキャン中に、ホームの一番上に出す進み具合。
+    private var scanStatus: some View {
+        HStack(spacing: 10) {
+            ProgressView(value: scan.progress)
+                .tint(Palette.keep)
+            Text("解析中 \(scan.processed.formatted()) / \(scan.total.formatted())")
+                .font(.caption)
+                .monospacedDigit()
+                .foregroundStyle(Palette.text2)
+        }
+        .accessibilityElement(children: .combine)
     }
 
     private var summaryCard: some View {

@@ -25,7 +25,7 @@ struct ScanProgressView: View {
             }
             .padding(.top, 36)
 
-            Label("アプリを閉じると解析は一時停止します。次に開いたときに続きから再開します。", systemImage: "clock")
+            Label("アプリを閉じても解析は続きます。進み具合はロック画面などに表示されます。", systemImage: "clock")
                 .font(.footnote)
                 .foregroundStyle(Palette.text2)
                 .padding(.top, 20)
