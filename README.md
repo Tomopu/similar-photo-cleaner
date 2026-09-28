@@ -15,7 +15,7 @@ xcodebuild test -project SimilarPhotoCleaner.xcodeproj -scheme SimilarPhotoClean
 
 - [PRD（プロダクト要求仕様）](docs/PRD.md)
 - [UIデザイン](docs/UI_DESIGN.md)（画面モックアップのソースは `docs/design/mockups/`、PNG は `python3 scripts/build_mockups.py` で再生成）
-- アプリアイコン: `docs/design/icon/*.svg`（標準・ダーク・色合い）。`python3 scripts/build_icon.py` で `AppIcon.appiconset` の PNG を再生成
+- アプリアイコン: `SimilarPhotoCleaner/AppIcon.icon`（Icon Composer 形式。ガラス表現・ダーク・色合いは iOS が描画）。編集は Xcode 付属の Icon Composer で開いて行い、`./scripts/export_icon_previews.sh` で `docs/figure/icon/` にプレビューを書き出す
 - 図: `docs/figure/*.png`（元になる mermaid ソースは `docs/figure/src/*.mmd`）
 - 旧 AlbumCleaner の要件メモ: `docs/archive/AlbumCleaner/`（参考用。現行の仕様は PRD）
 
