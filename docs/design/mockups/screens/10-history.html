@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>削除の実績</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<main class="screen" style="width: 390px; height: 844px">
+  <h1 class="large-title">実績</h1>
+
+  <section style="margin-top: 14px; display: flex; flex-direction: column; gap: 6px" aria-label="累計">
+    <span class="caption">これまでに減らした容量</span>
+    <span class="num" style="font-size: 48px; font-weight: 700; letter-spacing: -1.2px; line-height: 1">12.6<span style="font-size: 22px; font-weight: 600; letter-spacing: 0; margin-left: 4px">GB</span></span>
+    <span class="caption num">4,812枚 · 2026年4月から</span>
+  </section>
+
+  <section class="card" style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px" aria-label="月ごとの削減量">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <h2 class="headline" style="font-size: 15px">月ごとの削減量（GB）</h2>
+      <div class="segmented" style="width: 124px; border-radius: 10px" role="group" aria-label="期間">
+        <button type="button" aria-pressed="true" style="height: 28px; border-radius: 7px; font-size: 12px">6か月</button>
+        <button type="button" aria-pressed="false" style="height: 28px; border-radius: 7px; font-size: 12px">1年</button>
+      </div>
+    </div>
+    <svg viewBox="0 0 318 168" role="img" aria-label="4月 3.1GB、5月 1.2GB、6月 0.8GB、7月 2.4GB、8月 1.9GB、9月 3.2GB" style="display: block; width: 100%; height: auto; font-family: inherit">
+      <g style="stroke: var(--grid)" stroke-width="1">
+        <line x1="30" y1="14" x2="318" y2="14"/>
+        <line x1="30" y1="45.5" x2="318" y2="45.5"/>
+        <line x1="30" y1="77" x2="318" y2="77"/>
+        <line x1="30" y1="108.5" x2="318" y2="108.5"/>
+      </g>
+      <line x1="30" y1="140" x2="318" y2="140" stroke-width="1" style="stroke: var(--line)"/>
+      <g font-size="11" text-anchor="end" style="fill: var(--text-2)">
+        <text x="22" y="18">4</text>
+        <text x="22" y="49.5">3</text>
+        <text x="22" y="81">2</text>
+        <text x="22" y="112.5">1</text>
+        <text x="22" y="144">0</text>
+      </g>
+      <g style="fill: var(--chart)">
+        <path d="M40 140V46.35Q40 42.35 44 42.35H64Q68 42.35 68 46.35V140Z"/>
+        <path d="M88 140V106.2Q88 102.2 92 102.2H112Q116 102.2 116 106.2V140Z"/>
+        <path d="M136 140V118.8Q136 114.8 140 114.8H160Q164 114.8 164 118.8V140Z"/>
+        <path d="M184 140V68.4Q184 64.4 188 64.4H208Q212 64.4 212 68.4V140Z"/>
+        <path d="M232 140V84.15Q232 80.15 236 80.15H256Q260 80.15 260 84.15V140Z"/>
+        <path d="M280 140V43.2Q280 39.2 284 39.2H304Q308 39.2 308 43.2V140Z"/>
+      </g>
+      <text x="294" y="32" font-size="12" font-weight="700" text-anchor="middle" style="fill: var(--text)">3.2</text>
+      <g font-size="11" text-anchor="middle" style="fill: var(--text-2)">
+        <text x="54" y="160">4月</text>
+        <text x="102" y="160">5月</text>
+        <text x="150" y="160">6月</text>
+        <text x="198" y="160">7月</text>
+        <text x="246" y="160">8月</text>
+        <text x="294" y="160" font-weight="700" style="fill: var(--text)">9月</text>
+      </g>
+    </svg>
+  </section>
+
+  <section class="card" style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px" aria-label="整理の種別">
+    <h2 class="headline" style="font-size: 15px">整理の種別</h2>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; justify-content: space-between"><span style="font-size: 14px">似た写真</span><span class="num" style="font-size: 14px; font-weight: 600">7.9 GB</span></div>
+      <div style="height: 6px; border-radius: 3px; background: var(--surface-2)"><div style="width: 100%; height: 100%; border-radius: 3px; background: var(--chart)"></div></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; justify-content: space-between"><span style="font-size: 14px">スクリーンショット</span><span class="num" style="font-size: 14px; font-weight: 600">2.9 GB</span></div>
+      <div style="height: 6px; border-radius: 3px; background: var(--surface-2)"><div style="width: 36.7%; height: 100%; border-radius: 3px; background: var(--chart)"></div></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; justify-content: space-between"><span style="font-size: 14px">スワイプ</span><span class="num" style="font-size: 14px; font-weight: 600">1.8 GB</span></div>
+      <div style="height: 6px; border-radius: 3px; background: var(--surface-2)"><div style="width: 22.8%; height: 100%; border-radius: 3px; background: var(--chart)"></div></div>
+    </div>
+  </section>
+
+  <h2 class="section-label" style="margin-top: 20px">最近の削除</h2>
+  <ul class="group" style="list-style: none; margin: 0">
+    <li class="row"><span class="num">9月28日</span><span class="caption num">348枚 · 1.4 GB</span></li>
+    <li class="row"><span class="num">9月14日</span><span class="caption num">96枚 · 0.6 GB</span></li>
+    <li class="row"><span class="num">9月3日</span><span class="caption num">210枚 · 1.2 GB</span></li>
+  </ul>
+
+  <nav class="tabbar glass" aria-label="タブ">
+    <a href="03-home.html" class="tab" style="text-decoration: none"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 4h12a2 2 0 0 1 2 2v10"/></svg>整理</a>
+    <a href="08-tray.html" class="tab" style="text-decoration: none"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>削除予定<span class="badge num">348</span></a>
+    <a href="10-history.html" class="tab" style="text-decoration: none" aria-current="page"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5M12 16V7M17 16v-8"/></svg>実績</a>
+    <a href="11-settings.html" class="tab" style="text-decoration: none"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>設定</a>
+  </nav>
+</main>
+</body>
+</html>

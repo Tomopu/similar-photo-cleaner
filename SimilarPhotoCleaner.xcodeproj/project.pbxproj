@@ -328,6 +328,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "SimilarPhotoCleaner";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "似た写真やスクリーンショットを見つけて整理するために、写真ライブラリにアクセスします。写真は端末の外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -361,6 +362,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "SimilarPhotoCleaner";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "似た写真やスクリーンショットを見つけて整理するために、写真ライブラリにアクセスします。写真は端末の外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
