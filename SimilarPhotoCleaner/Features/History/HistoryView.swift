@@ -2,7 +2,7 @@ import Charts
 import SwiftData
 import SwiftUI
 
-/// 削除の実績: 累計、月ごとの削減量、整理のしかた別の内訳、最近の削除。
+/// 削除の実績: 累計、月ごとの削減量、整理の種別の内訳、最近の削除。
 struct HistoryView: View {
     @Query(sort: \DeletionRecord.date, order: .reverse) private var records: [DeletionRecord]
     @State private var months = 6
@@ -151,12 +151,12 @@ struct HistoryView: View {
         .card()
     }
 
-    // MARK: - 整理のしかた別
+    // MARK: - 整理の種別
 
     private func breakdownCard(_ summary: DeletionSummary) -> some View {
         let maxBytes = max(summary.bySource.map(\.bytes).max() ?? 1, 1)
         return VStack(alignment: .leading, spacing: 12) {
-            Text("整理のしかた別").font(.subheadline.weight(.semibold))
+            Text("整理の種別").font(.subheadline.weight(.semibold))
             ForEach(summary.bySource, id: \.source) { item in
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
