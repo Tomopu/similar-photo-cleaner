@@ -90,3 +90,21 @@ struct LibraryIndexTests {
         #expect(index.groups.map { $0.photoIDs.first } == ["big1", "small1"])
     }
 }
+
+struct UtilityPhotoTests {
+    @Test func utilityPhotosExcludeScreenshots() {
+        func utility(_ id: String, at seconds: TimeInterval, screenshot: Bool) -> PhotoRecord {
+            PhotoRecord(
+                id: id, creationDate: Date(timeIntervalSince1970: seconds), location: nil, burstIdentifier: nil,
+                vector: FeatureVector([Float(seconds), 1]), dHash: UInt64(seconds), aesthetics: 0, isUtility: true,
+                faceQuality: nil, sharpness: 1, pixelWidth: 10, pixelHeight: 10,
+                isScreenshot: screenshot, isFavorite: false, hasAdjustments: false
+            )
+        }
+        let index = LibraryIndex.build(
+            from: [utility("receipt", at: 0, screenshot: false), utility("shot", at: 100_000, screenshot: true), utility("doc", at: 200_000, screenshot: false)],
+            sensitivity: .standard
+        )
+        #expect(index.utilityPhotos.map(\.id) == ["doc", "receipt"])
+    }
+}
